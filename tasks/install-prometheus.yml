@@ -38,6 +38,9 @@
         src: "{{ prometheus_tarball_url }}"
         dest: "{{ prometheus_install_path }}"
         copy: no
+        owner: "{{ prometheus_user }}"
+        group: "{{ prometheus_group }}"
+        mode: "go-w"
 
   when: prometheus_version != "git"
 
@@ -90,7 +93,6 @@
     owner: "{{ prometheus_user }}"
     group: "{{ prometheus_group }}"
     mode: "go-w"
-    recurse: yes
 
 - name: mkdir for config and data
   file:
