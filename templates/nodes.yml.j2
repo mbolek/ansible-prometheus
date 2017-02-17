@@ -1,0 +1,5 @@
+# Monitor all nodes known to ansible with node_exporter
+{% for host in groups.all %}
+  #- targets: ['{{ hostvars[host].ansible_default_ipv4.address }}:9100'] #just IP addresses
+  - targets: ['{{ hostvars[host].ansible_fqdn }}:9100'] #FQDNs
+{% endfor %}

@@ -1,0 +1,53 @@
+ALERT InstanceDown
+  IF up == 0
+  FOR 3m
+  ANNOTATIONS {
+    summary = "Instance {{$labels.instance}} is down",
+    description = "{{$labels.instance}} of job {{$labels.job}} has been down for more than 3 minutes"
+  }
+
+ALERT InstanceHighLoad
+  IF node_load5 > count(node_cpu{mode="idle"})
+  FOR 5m
+  ANNOTATIONS {
+    summary = "Instance {{$labels.instance}}: high load",
+    description = "{{$labels.instance}} has high cpu load5"
+  }
+
+ALERT InstanceHighCpuUsage
+  IF (100 * (1 - avg by(job)(irate(node_cpu{mode='idle'}[5m])))) > 50
+  FOR 5m
+  ANNOTATIONS {
+    summary = "Instance {{ $labels.instance }} CPU usage is dangerously high",
+    description = "{{$labels.instance}}s CPU usage has exceeded the threshold with a value of {{ $value }}."
+  }
+
+ALERT DiskWillFillIn24Hours
+  IF predict_linear(node_filesystem_free{job='node'}[1d], 24*3600) < 0
+  FOR 5m
+  ANNOTATIONS {
+    summary = "Instance {{$labels.instance}} disk fillup in 24h!",
+    description = "{{$labels.instance}}s on of the disks fill fill up in 24h!"
+  }
+
+ALERT InstanceEntropyLow
+  IF node_entropy_available_bits < 200
+  FOR 5m
+  ANNOTATIONS {
+    summary = "Instance {{ $labels.instance}} low entropy",
+    description = "{{ $labels.instance}} entropy is low - {{ $value }}"
+  }
+ALERT InstanceLowMem
+  IF (node_memory_MemFree/ node_memory_MemTotal) * 100 < 15
+  FOR 5m
+  ANNOTATIONS {
+    summary = "Instance {{ $labels.instance}} low memory",
+    description = "{{ $labels.instance}} is low on memory - {{ $value }}%"
+  }
+ALERT InstanceSlowIO
+  IF sum by (instance) (irate(node_disk_io_time_ms[5m])) > 250
+  FOR 1m
+  ANNOTATIONS {
+    summary = "Instance {{ $labels.instance}} slow IO",
+    description = "{{ $labels.instance}} slow IO - {{ $value }}"
+  }
