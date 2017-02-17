@@ -152,3 +152,8 @@
   notify:
     - reload prometheus
 
+- name: create nodes list
+  template:
+    src: "../templates/nodes.yml.j2"
+    dest: "{{ prometheus_config_path }}/tgroups/nodes.yml"
+
