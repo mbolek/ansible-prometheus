@@ -15,7 +15,7 @@ ALERT InstanceHighLoad
   }
 
 ALERT InstanceHighCpuUsage
-  IF (100 * (1 - avg by(job)(irate(node_cpu{mode='idle'}[5m])))) > 50
+  IF (100 * (1 - avg by(job)(rate(node_cpu{mode='idle'}[5m])))) > 50
   FOR 5m
   ANNOTATIONS {
     summary = "Instance {{ $labels.instance }} CPU usage is dangerously high",
@@ -45,7 +45,7 @@ ALERT InstanceLowMem
     description = "{{ $labels.instance}} is low on memory - {{ $value }}%"
   }
 ALERT InstanceSlowIO
-  IF sum by (instance) (irate(node_disk_io_time_ms[5m])) > 250
+  IF sum by (instance) (rate(node_disk_io_time_ms[5m])) > 250
   FOR 1m
   ANNOTATIONS {
     summary = "Instance {{ $labels.instance}} slow IO",
